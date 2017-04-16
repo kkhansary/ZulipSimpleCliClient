@@ -106,5 +106,11 @@
     </None>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ZulipClientApi\ZulipClientApi.vbproj">
+      <Project>{b19bd2f1-3268-4b30-90f5-2bb81e46f5df}</Project>
+      <Name>ZulipClientApi</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>
