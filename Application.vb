@@ -13,6 +13,8 @@
             Select Case Command
                 Case "Help"
                     Help()
+                Case "LogIn"
+                    Await LogIn()
                 Case "Quit"
                     Exit Do
                 Case Else
@@ -27,8 +29,29 @@
 
     Private Sub Help()
         Console.WriteLine("Commands: ")
+        Console.Write("LogIn" & ControlChars.Tab)
         Console.WriteLine("Quit")
     End Sub
 
+    Private Async Function LogIn() As Task(Of Boolean)
+        Client = New Zulip.Client(Address)
+
+        Console.Write("UserName: ")
+        Dim UserName = Console.ReadLine()
+        Console.Write("Password: ")
+        Dim Password = Console.ReadLine()
+        Try
+            Await Client.LoginAsync(Zulip.LoginData.CreateByPassword(UserName, Password))
+            Console.WriteLine("Loged in.")
+            Return True
+        Catch ex As Exception
+            Console.WriteLine(ex.Message)
+            Return False
+        End Try
+    End Function
+
+    Private Client As Zulip.Client
+    Private ReadOnly Address As String = "https://chat.zulip.org/"
     Private ReadOnly WaitHandle As Threading.EventWaitHandle = New Threading.EventWaitHandle(False, Threading.EventResetMode.ManualReset)
+
 End Module
