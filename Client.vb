@@ -1,7 +1,7 @@
 ﻿Public Class Client
 
     Public Async Function Run() As Task
-        For Each Method In Me.GetType().GetMethods()
+        For Each Method In Me.GetType().GetMethods(Reflection.BindingFlags.NonPublic Or Reflection.BindingFlags.Public Or Reflection.BindingFlags.Instance Or Reflection.BindingFlags.Static)
             Dim Attributes = Method.GetCustomAttributes(GetType(CommandAttribute), False)
             If Attributes.Length = 0 Then
                 Continue For
