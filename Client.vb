@@ -17,8 +17,16 @@
             Dim Command = DirectCast(Attributes(0), CommandAttribute)
             Command.Method = Method
 
-            Attributes = Method.GetCustomAttributes(GetType(ParameterDescriptionAttribute), False)
-            Command.SetParametersDescriptions(Attributes.Cast(Of ParameterDescriptionAttribute)())
+            Dim Parameters = Method.GetParameters()
+            Dim ParametersDescriptions = New List(Of ParameterDescriptionAttribute)()
+            Dim ParameterAttributes = Method.GetCustomAttributes(GetType(ParameterDescriptionAttribute), False) _
+                                            .Cast(Of ParameterDescriptionAttribute)()
+            For Each P In Parameters
+                Dim Par = ParameterAttributes.First(Function(A) A.Name = P.Name)
+                ParametersDescriptions.Add(Par)
+            Next
+
+            Command.SetParametersDescriptions(ParametersDescriptions)
 
             Attributes = Method.GetCustomAttributes(GetType(CommandAliasAttribute), False)
             Dim Aliases = New List(Of String)
