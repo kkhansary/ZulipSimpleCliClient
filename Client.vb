@@ -15,6 +15,7 @@
             End If
 
             Dim Command = DirectCast(Attributes(0), CommandAttribute)
+            Command.Name = Method.Name
             Command.Method = Method
 
             Dim Parameters = Method.GetParameters()
@@ -32,13 +33,13 @@
             Attributes = Method.GetCustomAttributes(GetType(CommandAliasAttribute), False)
             Dim Aliases = New List(Of String)
             For Each [Alias] As CommandAliasAttribute In Attributes
-                AliasesNames.Add([Alias].Alias, Method.Name)
+                AliasesNames.Add([Alias].Alias, Command.Name)
                 Aliases.Add([Alias].Alias)
             Next
-            AliasesNames.Add(Method.Name, Method.Name)
+            AliasesNames.Add(Command.Name, Command.Name)
 
             Command.SetAliases(Aliases)
-            Commands.Add(Method.Name, Command)
+            Commands.Add(Command.Name, Command)
         Next
 
         Do
@@ -97,7 +98,7 @@
             End If
 
             Console.WriteLine("Usage:")
-            Console.Write("   " & CommandName)
+            Console.Write("   " & Command.Name)
             For Each PD In Command.ParametersDescriptions
                 If PD.IsOptional Then
                     Console.Write($" [<{PD.Name}>]")

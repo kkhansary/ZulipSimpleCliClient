@@ -21,6 +21,25 @@ Public Class CommandAttribute
     End Property
 #End Region
 
+#Region "Name Property"
+    Private _Name As String
+
+    Public Property Name As String
+        Get
+            Return Me._Name
+        End Get
+        Set(ByVal Value As String)
+            If Me._Name IsNot Nothing Then
+                Throw New InvalidOperationException($"Cannot set {NameOf(Me.Name)} twice.")
+            End If
+            If Value Is Nothing Then
+                Throw New ArgumentNullException(NameOf(Value))
+            End If
+            Me._Name = Value
+        End Set
+    End Property
+#End Region
+
 #Region "Aliases Property"
     Private _Aliases As IReadOnlyList(Of String)
 
