@@ -83,7 +83,7 @@
     <Command(Description:="")>
     <ParameterDescription("CommandName", "")>
     <CommandAlias("H")>
-    Private Sub Help(Optional ByVal CommandName As String = Nothing)
+    Private Function Help(Optional ByVal CommandName As String = Nothing) As Task
         If CommandName Is Nothing Then
             Console.WriteLine("Commands:")
             Dim PadLength = Commands.Max(Function(Cmd) Cmd.Key.Length)
@@ -94,7 +94,8 @@
             Dim Command As CommandAttribute = Nothing
             If Not Commands.TryGetValue(CommandName, Command) Then
                 Console.WriteLine("Command not found. Write ""Help"" to see commands list.")
-                Exit Sub
+
+                Return Task.FromResult(Of Object)(Nothing)
             End If
 
             Console.WriteLine("Usage:")
@@ -120,7 +121,9 @@
                 Console.WriteLine("   " & PD.Name.PadRight(PadLength) & "   " & PD.Description)
             Next
         End If
-    End Sub
+
+        Return Task.FromResult(Of Object)(Nothing)
+    End Function
 
     Private ReadOnly AliasesNames As Dictionary(Of String, String) = New Dictionary(Of String, String)()
     Private ReadOnly Commands As Dictionary(Of String, CommandAttribute) = New Dictionary(Of String, CommandAttribute)(StringComparer.InvariantCultureIgnoreCase)
