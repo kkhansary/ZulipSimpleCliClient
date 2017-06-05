@@ -49,6 +49,10 @@
             Console.Write(Client?.UserName & "> ")
             Dim CommandString = Console.ReadLine().Split({" "c}, StringSplitOptions.RemoveEmptyEntries)
 
+            If CommandString.Length = 0 Then
+                Continue Do
+            End If
+
             Dim CommandName As String = Nothing
             If Not AliasesNames.TryGetValue(CommandString(0), CommandName) Then
                 Console.WriteLine("Command not found.")
