@@ -23,6 +23,7 @@
                                             .Cast(Of ParameterDescriptionAttribute)()
             For Each P In Parameters
                 Dim Par = ParameterAttributes.First(Function(A) A.Name = P.Name)
+                Par.IsOptional = P.IsOptional
                 ParametersDescriptions.Add(Par)
             Next
 
@@ -98,7 +99,11 @@
             Console.WriteLine("Usage:")
             Console.Write("   " & CommandName)
             For Each PD In Command.ParametersDescriptions
-                Console.Write(" " & PD.Name)
+                If PD.IsOptional Then
+                    Console.Write($" [<{PD.Name}>]")
+                Else
+                    Console.Write($" <{PD.Name}>")
+                End If
             Next
             Console.WriteLine()
 

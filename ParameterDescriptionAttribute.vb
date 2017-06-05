@@ -7,6 +7,22 @@ Public Class ParameterDescriptionAttribute
         _Description = Description
     End Sub
 
+#Region "IsOptional Property"
+    Private _IsOptional As Boolean?
+
+    Public Property IsOptional As Boolean
+        Get
+            Return Me._IsOptional.Value
+        End Get
+        Set(ByVal Value As Boolean)
+            If Me._IsOptional.HasValue Then
+                Throw New InvalidOperationException($"Cannot set {NameOf(Me.IsOptional)} twice.")
+            End If
+            Me._IsOptional = Value
+        End Set
+    End Property
+#End Region
+
 #Region "Name Read-Only Property"
     Private ReadOnly _Name As String
 
