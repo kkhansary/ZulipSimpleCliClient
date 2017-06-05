@@ -1,4 +1,4 @@
-﻿<AttributeUsage(AttributeTargets.Method)>
+﻿<AttributeUsage(AttributeTargets.Method, AllowMultiple:=True)>
 Public Class ParameterDescriptionAttribute
     Inherits Attribute
 
