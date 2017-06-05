@@ -1,6 +1,55 @@
 ﻿Public Class Client
 
     Public Async Function Run() As Task
+        Me.InitializeCommands()
+        Await Me.RunInteractiveConsole()
+    End Function
+
+    Private Async Function RunInteractiveConsole() As Task
+        Do
+            Console.Write(Client?.UserName & "> ")
+            Dim CommandString = Console.ReadLine().Split({" "c}, StringSplitOptions.RemoveEmptyEntries)
+
+            If CommandString.Length = 0 Then
+                Continue Do
+            End If
+
+            Dim CommandName As String = Nothing
+            If Not AliasesNames.TryGetValue(CommandString(0), CommandName) Then
+                Console.WriteLine("Command not found.")
+                Continue Do
+            End If
+
+            Dim Command = Commands.Item(CommandName)
+
+            Dim Args = New List(Of String)
+            For I = 1 To CommandString.Length - 1
+                Args.Add(CommandString(I))
+            Next
+            For I = CommandString.Length - 1 To Command.ParametersDescriptions.Count - 1
+                If Not Command.ParametersDescriptions(I).IsOptional Then
+                    Console.WriteLine("Invalid parameters. Usage:")
+                    Console.Write("   " & Command.Name)
+                    For Each PD In Command.ParametersDescriptions
+                        If PD.IsOptional Then
+                            Console.Write($" [<{PD.Name}>]")
+                        Else
+                            Console.Write($" <{PD.Name}>")
+                        End If
+                    Next
+                    Console.WriteLine()
+                    Console.WriteLine()
+                    Continue Do
+                End If
+                Args.Add(Command.ParametersDescriptions(I).DefaultValue)
+            Next
+
+            Await DirectCast(Command.Method.Invoke(Me, Args.ToArray()), Task)
+            Console.WriteLine()
+        Loop
+    End Function
+
+    Private Sub InitializeCommands()
         For Each Method In Me.GetType().GetMethods(Reflection.BindingFlags.NonPublic Or Reflection.BindingFlags.Public Or Reflection.BindingFlags.Instance Or Reflection.BindingFlags.Static)
             Dim Attributes = Method.GetCustomAttributes(GetType(CommandAttribute), False)
             If Attributes.Length = 0 Then
@@ -44,49 +93,7 @@
             Command.SetAliases(Aliases)
             Commands.Add(Command.Name, Command)
         Next
-
-        Do
-            Console.Write(Client?.UserName & "> ")
-            Dim CommandString = Console.ReadLine().Split({" "c}, StringSplitOptions.RemoveEmptyEntries)
-
-            If CommandString.Length = 0 Then
-                Continue Do
-            End If
-
-            Dim CommandName As String = Nothing
-            If Not AliasesNames.TryGetValue(CommandString(0), CommandName) Then
-                Console.WriteLine("Command not found.")
-                Continue Do
-            End If
-
-            Dim Command = Commands.Item(CommandName)
-
-            Dim Args = New List(Of String)
-            For I = 1 To CommandString.Length - 1
-                Args.Add(CommandString(I))
-            Next
-            For I = CommandString.Length - 1 To Command.ParametersDescriptions.Count - 1
-                If Not Command.ParametersDescriptions(I).IsOptional Then
-                    Console.WriteLine("Invalid parameters. Usage:")
-                    Console.Write("   " & Command.Name)
-                    For Each PD In Command.ParametersDescriptions
-                        If PD.IsOptional Then
-                            Console.Write($" [<{PD.Name}>]")
-                        Else
-                            Console.Write($" <{PD.Name}>")
-                        End If
-                    Next
-                    Console.WriteLine()
-                    Console.WriteLine()
-                    Continue Do
-                End If
-                Args.Add(Command.ParametersDescriptions(I).DefaultValue)
-            Next
-
-            Await DirectCast(Command.Method.Invoke(Me, Args.ToArray()), Task)
-            Console.WriteLine()
-        Loop
-    End Function
+    End Sub
 
     <Command(Description:="Set server address.")>
     <ParameterDescription("Address", "Server address")>
