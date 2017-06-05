@@ -44,6 +44,17 @@
         Loop
     End Function
 
+    <Command(Description:="Set server address.")>
+    <ParameterDescription("Address", "Server address")>
+    <CommandAlias("SetAddress")>
+    <CommandAlias("Address")>
+    <CommandAlias("Addr")>
+    <CommandAlias("A")>
+    Private Function SetServerAddress(Address As String) As Task
+        Me.Address = Address
+        Return Task.FromResult(Of Object)(Nothing)
+    End Function
+
     Private Sub Help()
         Console.WriteLine("Commands: ")
         Console.Write("LogIn" & ControlChars.Tab)
@@ -66,6 +77,6 @@
     End Function
 
     Private Client As Zulip.Client
-    Private ReadOnly Address As String = "https://chat.zulip.org/"
+    Private Address As String
 
 End Class
