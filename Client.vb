@@ -73,9 +73,9 @@
     Private Sub Help(Optional ByVal CommandName As String = Nothing)
         If CommandName Is Nothing Then
             Console.WriteLine("Commands:")
-            Dim PadLength = Commands.Max(Function(Cmd) Cmd.Key.Length) + 3
+            Dim PadLength = Commands.Max(Function(Cmd) Cmd.Key.Length)
             For Each Cmd In Commands
-                Console.WriteLine(Cmd.Key.PadRight(PadLength) & Cmd.Value.Description)
+                Console.WriteLine("   " & Cmd.Key.PadRight(PadLength) & "   " & Cmd.Value.Description)
             Next
         Else
             Dim Command As CommandAttribute = Nothing
@@ -84,10 +84,16 @@
                 Exit Sub
             End If
 
-            Console.WriteLine(CommandName & ":")
-            Dim PadLength = Command.ParametersDescriptions.Max(Function(PD) PD.Description.Length) + 3
+            Console.WriteLine("Usage:")
+            Console.Write("   " & CommandName)
             For Each PD In Command.ParametersDescriptions
-                Console.WriteLine(PD.Name.PadRight(PadLength) & PD.Description)
+                Console.Write(" " & PD.Name)
+            Next
+            Console.WriteLine()
+
+            Dim PadLength = Command.ParametersDescriptions.Max(Function(PD) PD.Description.Length)
+            For Each PD In Command.ParametersDescriptions
+                Console.WriteLine("   " & PD.Name.PadRight(PadLength) & "   " & PD.Description)
             Next
         End If
     End Sub
