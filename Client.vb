@@ -48,11 +48,14 @@
         Do
             Console.Write(Client?.UserName & "> ")
             Dim CommandString = Console.ReadLine().Split({" "c}, StringSplitOptions.RemoveEmptyEntries)
-            Dim Command As CommandAttribute = Nothing
-            If Not Commands.TryGetValue(CommandString(0), Command) Then
+
+            Dim CommandName As String = Nothing
+            If Not AliasesNames.TryGetValue(CommandString(0), CommandName) Then
                 Console.WriteLine("Command not found.")
                 Continue Do
             End If
+
+            Dim Command = Commands.Item(CommandName)
 
             Dim Args = New List(Of String)
             For I = 1 To CommandString.Length - 1
@@ -106,12 +109,12 @@
                 Console.WriteLine("   " & Cmd.Key.PadRight(PadLength) & "   " & Cmd.Value.Description)
             Next
         Else
-            Dim Command As CommandAttribute = Nothing
-            If Not Commands.TryGetValue(CommandName, Command) Then
+            If Not AliasesNames.TryGetValue(CommandName, CommandName) Then
                 Console.WriteLine("Command not found. Write ""Help"" to see commands list.")
 
                 Return Task.FromResult(Of Object)(Nothing)
             End If
+            Dim Command = Commands.Item(CommandName)
 
             Console.WriteLine("Usage:")
             Console.Write("   " & Command.Name)
@@ -142,8 +145,8 @@
         Return Task.FromResult(Of Object)(Nothing)
     End Function
 
-    Private ReadOnly AliasesNames As Dictionary(Of String, String) = New Dictionary(Of String, String)()
-    Private ReadOnly Commands As Dictionary(Of String, CommandAttribute) = New Dictionary(Of String, CommandAttribute)(StringComparer.InvariantCultureIgnoreCase)
+    Private ReadOnly AliasesNames As Dictionary(Of String, String) = New Dictionary(Of String, String)(StringComparer.InvariantCultureIgnoreCase)
+    Private ReadOnly Commands As Dictionary(Of String, CommandAttribute) = New Dictionary(Of String, CommandAttribute)()
 
     Private Client As Zulip.Client
     Private Address As String
