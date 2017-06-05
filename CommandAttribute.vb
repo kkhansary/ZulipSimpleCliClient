@@ -21,6 +21,26 @@ Public Class CommandAttribute
     End Property
 #End Region
 
+#Region "Aliases Property"
+    Private _Aliases As IReadOnlyList(Of String)
+
+    Public ReadOnly Property Aliases As IReadOnlyList(Of String)
+        Get
+            Return Me._Aliases
+        End Get
+    End Property
+
+    Public Sub SetAliases(ByVal Value As IEnumerable(Of String))
+        If Me._Aliases IsNot Nothing Then
+            Throw New InvalidOperationException($"Cannot set {NameOf(Me.Aliases)} twice.")
+        End If
+        If Value Is Nothing Then
+            Throw New ArgumentNullException(NameOf(Value))
+        End If
+        Me._Aliases = New ObjectModel.ReadOnlyCollection(Of String)(Value.ToArray())
+    End Sub
+#End Region
+
 #Region "Description Property"
     Private _Description As String
 

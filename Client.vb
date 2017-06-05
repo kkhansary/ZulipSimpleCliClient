@@ -20,13 +20,16 @@
             Attributes = Method.GetCustomAttributes(GetType(ParameterDescriptionAttribute), False)
             Command.SetParametersDescriptions(Attributes.Cast(Of ParameterDescriptionAttribute)())
 
-            Commands.Add(Method.Name, Command)
-
             Attributes = Method.GetCustomAttributes(GetType(CommandAliasAttribute), False)
+            Dim Aliases = New List(Of String)
             For Each [Alias] As CommandAliasAttribute In Attributes
                 AliasesNames.Add([Alias].Alias, Method.Name)
+                Aliases.Add([Alias].Alias)
             Next
             AliasesNames.Add(Method.Name, Method.Name)
+
+            Command.SetAliases(Aliases)
+            Commands.Add(Method.Name, Command)
         Next
 
         Do
@@ -88,6 +91,13 @@
             Console.Write("   " & CommandName)
             For Each PD In Command.ParametersDescriptions
                 Console.Write(" " & PD.Name)
+            Next
+            Console.WriteLine()
+
+            Console.WriteLine("Aliases:")
+            Console.Write("  ")
+            For Each [Alias] In Command.Aliases
+                Console.Write(" " & [Alias])
             Next
             Console.WriteLine()
 
