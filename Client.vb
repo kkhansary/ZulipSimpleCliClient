@@ -7,11 +7,11 @@
                 Continue For
             End If
 
-            If (Method.Attributes And Reflection.MethodAttributes.Static) = Reflection.MethodAttributes.Static Then
-                Throw New Exception("A command attributed method must be shared.")
+            If Method.IsStatic Then
+                Throw New InvalidOperationException("A method with a command attribute cannot be shared.")
             End If
             If Method.ReturnType <> GetType(Task) Then
-                Throw New Exception("A command attributed method must return a task.")
+                Throw New InvalidOperationException("A method with a command attribute must return a task.")
             End If
 
             Dim Command = DirectCast(Attributes(0), CommandAttribute)
