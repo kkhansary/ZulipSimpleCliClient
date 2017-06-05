@@ -1,9 +1,6 @@
 ﻿Public Class Client
 
     Public Async Function Run() As Task
-        Dim AliasesNames = New Dictionary(Of String, String)
-        Dim Commands = New Dictionary(Of String, (Reflection.MethodInfo, String, List(Of String)))
-
         For Each Method In Me.GetType().GetMethods()
             Dim Attributes = Method.GetCustomAttributes(GetType(CommandAttribute), False)
             If Attributes.Length = 0 Then
@@ -76,6 +73,9 @@
             Console.WriteLine(Ex.Message)
         End Try
     End Function
+
+    Private ReadOnly AliasesNames As Dictionary(Of String, String) = New Dictionary(Of String, String)()
+    Private ReadOnly Commands As Dictionary(Of String, CommandAttribute) = New Dictionary(Of String, CommandAttribute)()
 
     Private Client As Zulip.Client
     Private Address As String
