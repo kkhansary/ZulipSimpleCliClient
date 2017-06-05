@@ -38,7 +38,9 @@
             Dim Command As CommandAttribute = Nothing
             If Not Commands.TryGetValue(CommandString(0), Command) Then
                 Console.WriteLine("Command not found.")
+                Continue Do
             End If
+            Await DirectCast(Command.Method.Invoke(Me, CommandString.Skip(1).ToArray()), Task)
             Console.WriteLine()
         Loop
     End Function
