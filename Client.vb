@@ -115,7 +115,9 @@
                 Console.Write(" " & [Alias])
             Next
             Console.WriteLine()
+            Console.WriteLine()
 
+            Console.WriteLine("Parameters:")
             Dim PadLength = Command.ParametersDescriptions.Max(Function(PD) PD.Description.Length)
             For Each PD In Command.ParametersDescriptions
                 Console.WriteLine("   " & PD.Name.PadRight(PadLength) & "   " & PD.Description)
