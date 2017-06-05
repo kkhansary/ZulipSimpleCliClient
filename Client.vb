@@ -80,6 +80,7 @@
     <CommandAlias("Addr")>
     <CommandAlias("A")>
     Private Function SetServerAddress(Address As String) As Task
+        Client = Nothing
         Me.Address = Address
         Return Task.FromResult(Of Object)(Nothing)
     End Function
