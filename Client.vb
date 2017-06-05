@@ -17,14 +17,13 @@
                 Throw New Exception("A command attributed method must return a task.")
             End If
 
-            Dim CommandDescription = DirectCast(Attributes(0), CommandAttribute).Description
-            Dim ParametersDescription = New List(Of String)
-            Attributes = Method.GetCustomAttributes(GetType(ParameterDescriptionAttribute), False)
-            For Each ParameterDescription As ParameterDescriptionAttribute In Attributes
-                ParametersDescription.Add(ParameterDescription.Description)
-            Next
+            Dim Command = DirectCast(Attributes(0), CommandAttribute)
+            Command.Method = Method
 
-            Commands.Add(Method.Name, (Method, CommandDescription, ParametersDescription))
+            Attributes = Method.GetCustomAttributes(GetType(ParameterDescriptionAttribute), False)
+            Command.ParametersDescriptions = Attributes.Cast(Of ParameterDescriptionAttribute)().ToArray()
+
+            Commands.Add(Method.Name, Command)
 
             Attributes = Method.GetCustomAttributes(GetType(CommandAliasAttribute), False)
             For Each [Alias] As CommandAliasAttribute In Attributes
@@ -36,7 +35,7 @@
         Do
             Console.Write(Client?.UserName & "> ")
             Dim CommandString = Console.ReadLine().Split({" "c}, StringSplitOptions.RemoveEmptyEntries)
-            Dim Command As (Reflection.MethodInfo, String, List(Of String)) = Nothing
+            Dim Command As CommandAttribute = Nothing
             If Not Commands.TryGetValue(CommandString(0), Command) Then
                 Console.WriteLine("Command not found.")
             End If
