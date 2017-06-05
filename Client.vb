@@ -53,13 +53,6 @@
         Return Task.FromResult(Of Object)(Nothing)
     End Function
 
-    Private Sub Help()
-        Console.WriteLine("Commands: ")
-        Console.Write("LogIn" & ControlChars.Tab)
-        Console.WriteLine("Quit")
-    End Sub
-
-
     <Command(Description:="Logs in to an account.")>
     <ParameterDescription("UserName", "")>
     <ParameterDescription("Password", "")>
@@ -73,6 +66,31 @@
             Console.WriteLine(Ex.Message)
         End Try
     End Function
+
+    <Command(Description:="")>
+    <ParameterDescription("CommandName", "")>
+    <CommandAlias("H")>
+    Private Sub Help(Optional ByVal CommandName As String = Nothing)
+        If CommandName Is Nothing Then
+            Console.WriteLine("Commands:")
+            Dim PadLength = Commands.Max(Function(Cmd) Cmd.Key.Length) + 3
+            For Each Cmd In Commands
+                Console.WriteLine(Cmd.Key.PadRight(PadLength) & Cmd.Value.Description)
+            Next
+        Else
+            Dim Command As CommandAttribute = Nothing
+            If Not Commands.TryGetValue(CommandName, Command) Then
+                Console.WriteLine("Command not found. Write ""Help"" to see commands list.")
+                Exit Sub
+            End If
+
+            Console.WriteLine(CommandName & ":")
+            Dim PadLength = Command.ParametersDescriptions.Max(Function(PD) PD.Description.Length) + 3
+            For Each PD In Command.ParametersDescriptions
+                Console.WriteLine(PD.Name.PadRight(PadLength) & PD.Description)
+            Next
+        End If
+    End Sub
 
     Private ReadOnly AliasesNames As Dictionary(Of String, String) = New Dictionary(Of String, String)()
     Private ReadOnly Commands As Dictionary(Of String, CommandAttribute) = New Dictionary(Of String, CommandAttribute)()
