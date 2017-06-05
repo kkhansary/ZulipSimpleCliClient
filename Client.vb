@@ -50,20 +50,18 @@
         Console.WriteLine("Quit")
     End Sub
 
-    Private Async Function LogIn() As Task(Of Boolean)
-        Client = New Zulip.Client(Address)
 
-        Console.Write("UserName: ")
-        Dim UserName = Console.ReadLine()
-        Console.Write("Password: ")
-        Dim Password = Console.ReadLine()
+    <Command(Description:="Logs in to an account.")>
+    <ParameterDescription("UserName", "")>
+    <ParameterDescription("Password", "")>
+    <CommandAlias("L")>
+    Private Async Function LogIn(UserName As String, Password As String) As Task
+        Client = New Zulip.Client(Address)
         Try
             Await Client.LoginAsync(Zulip.LoginData.CreateByPassword(UserName, Password))
-            Console.WriteLine("Loged in.")
-            Return True
-        Catch ex As Exception
-            Console.WriteLine(ex.Message)
-            Return False
+            Console.WriteLine("Logged in.")
+        Catch Ex As Exception
+            Console.WriteLine(Ex.Message)
         End Try
     End Function
 
