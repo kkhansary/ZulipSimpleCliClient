@@ -18,7 +18,7 @@
             Command.Method = Method
 
             Attributes = Method.GetCustomAttributes(GetType(ParameterDescriptionAttribute), False)
-            Command.ParametersDescriptions = Attributes.Cast(Of ParameterDescriptionAttribute)().ToArray()
+            Command.SetParametersDescriptions(Attributes.Cast(Of ParameterDescriptionAttribute)())
 
             Commands.Add(Method.Name, Command)
 
