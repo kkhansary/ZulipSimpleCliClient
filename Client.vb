@@ -93,7 +93,7 @@
     End Sub
 
     Private ReadOnly AliasesNames As Dictionary(Of String, String) = New Dictionary(Of String, String)()
-    Private ReadOnly Commands As Dictionary(Of String, CommandAttribute) = New Dictionary(Of String, CommandAttribute)()
+    Private ReadOnly Commands As Dictionary(Of String, CommandAttribute) = New Dictionary(Of String, CommandAttribute)(StringComparer.InvariantCultureIgnoreCase)
 
     Private Client As Zulip.Client
     Private Address As String
