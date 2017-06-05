@@ -25,6 +25,9 @@
             For Each P In Parameters
                 Dim Par = ParameterAttributes.First(Function(A) A.Name = P.Name)
                 Par.IsOptional = P.IsOptional
+                If Par.IsOptional Then
+                    Par.DefaultValue = DirectCast(P.DefaultValue, String)
+                End If
                 ParametersDescriptions.Add(Par)
             Next
 
@@ -50,7 +53,19 @@
                 Console.WriteLine("Command not found.")
                 Continue Do
             End If
-            Await DirectCast(Command.Method.Invoke(Me, CommandString.Skip(1).ToArray()), Task)
+
+            Dim Args = New List(Of String)
+            For I = 1 To CommandString.Length - 1
+                Args.Add(CommandString(I))
+            Next
+            For I = CommandString.Length - 1 To Command.ParametersDescriptions.Count - 1
+                If Not Command.ParametersDescriptions(I).IsOptional Then
+                    Console.WriteLine("You must provide " & Command.ParametersDescriptions(I).Name & "."c)
+                End If
+                Args.Add(Command.ParametersDescriptions(I).DefaultValue)
+            Next
+
+            Await DirectCast(Command.Method.Invoke(Me, Args.ToArray()), Task)
             Console.WriteLine()
         Loop
     End Function

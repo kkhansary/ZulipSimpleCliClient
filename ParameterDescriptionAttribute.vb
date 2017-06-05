@@ -23,6 +23,24 @@ Public Class ParameterDescriptionAttribute
     End Property
 #End Region
 
+#Region "DefaultValue Property"
+    Private _DefaultValue As String
+    Private _DefaultValueSet As Boolean
+
+    Public Property DefaultValue As String
+        Get
+            Return Me._DefaultValue
+        End Get
+        Set(ByVal Value As String)
+            If Me._DefaultValueSet Then
+                Throw New InvalidOperationException($"Cannot set {NameOf(Me.DefaultValue)} twice.")
+            End If
+            Me._DefaultValue = Value
+            Me._DefaultValueSet = True
+        End Set
+    End Property
+#End Region
+
 #Region "Name Read-Only Property"
     Private ReadOnly _Name As String
 
