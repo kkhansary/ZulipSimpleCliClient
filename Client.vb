@@ -122,6 +122,76 @@
     End Function
 
     <Command(Description:="")>
+    <ParameterDescription("Type", "")>
+    <CommandAlias("SU")>
+    Private Async Function ShowUsers(Optional ByVal Type As String = "All") As Task
+        If Type Is Nothing Then
+            Type = "All"
+        End If
+
+        If Not Client.IsLoggedIn Then
+            Console.WriteLine("You should log in first.")
+            Exit Function
+        End If
+
+        Dim NamePadLength = 20
+        Dim EmailPadLength = 30
+
+        Dim ShowBots = False
+        Dim ShowAdmins = False
+        Dim ShowOtherUsers = False
+
+        Select Case Type.ToLower
+            Case "all"
+                ShowBots = True
+                ShowAdmins = True
+                ShowOtherUsers = True
+            Case "bot"
+                ShowBots = True
+            Case "admin"
+                ShowAdmins = True
+            Case "users"
+                ShowAdmins = True
+                ShowOtherUsers = True
+            Case Else
+                Console.WriteLine("Type not found. Enter ""Help ShowUsers"" to see valid types.")
+        End Select
+
+        Await Client.Users.RetrieveAsync
+
+        For Each User In Client.Users.Value
+            If User.IsBot Then
+                If Not ShowBots Then
+                    Continue For
+                End If
+                Console.Write("Bot     ")
+            ElseIf User.IsAdmin Then
+                If Not ShowAdmins Then
+                    Continue For
+                End If
+                Console.Write("Admin   ")
+            Else
+                If Not ShowOtherUsers Then
+                    Continue For
+                End If
+                Console.Write("User    ")
+            End If
+
+            Console.Write(User.FullName.PadRight(NamePadLength) & "   " & User.EmailAddress.PadRight(EmailPadLength))
+
+            If User.IsActive Then
+                Console.Write("Active     ")
+            Else
+                Console.Write("Inactive   ")
+            End If
+            If User.IsFrozen Then
+                Console.Write("Frozen")
+            End If
+            Console.WriteLine()
+        Next
+    End Function
+
+    <Command(Description:="")>
     <ParameterDescription("CommandName", "")>
     <CommandAlias("H")>
     Private Function Help(Optional ByVal CommandName As String = Nothing) As Task
