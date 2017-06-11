@@ -122,6 +122,24 @@
     End Function
 
     <Command(Description:="")>
+    <ParameterDescription("Command", "")>
+    <ParameterDescription("SubCommand", "")>
+    <CommandAlias("U")>
+    Private Async Function Users(Command As String, Optional SubCommand1 As String = Nothing) As Task
+        If Not Client.IsLoggedIn Then
+            Console.WriteLine("You should log in first.")
+            Exit Function
+        End If
+
+        Select Case Command.ToLower
+            Case "show"
+                Await Me.ShowUsers(SubCommand1)
+            Case Else
+                Console.WriteLine("Command not found. Enter ""Help Users"" to see valid commands.")
+        End Select
+    End Function
+
+    <Command(Description:="")>
     <ParameterDescription("Type", "")>
     <CommandAlias("SU")>
     Private Async Function ShowUsers(Optional ByVal Type As String = "All") As Task
