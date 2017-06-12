@@ -144,6 +144,9 @@
                     Exit Function
                 End If
 
+                If SubCommand1 Is Nothing Then
+                    Await Me.UsersShow()
+                End If
                 Await Me.UsersShow(SubCommand1)
             Case "information", "info"
                 Await Me.UserInformation(SubCommand1, SubCommand2)
@@ -169,8 +172,8 @@
         Dim ShowAdmins = False
         Dim ShowOtherUsers = False
 
-        Select Case Type?.ToLower
-            Case "all", Nothing
+        Select Case Type.ToLower
+            Case "all"
                 ShowBots = True
                 ShowAdmins = True
                 ShowOtherUsers = True
