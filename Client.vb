@@ -16,7 +16,8 @@
 
             Dim CommandName As String = Nothing
             If Not AliasesNames.TryGetValue(CommandString(0), CommandName) Then
-                Console.WriteLine("Command not found.")
+                Console.WriteLine("Command not found. Write ""Help"" to see commands list.")
+                Console.WriteLine()
                 Continue Do
             End If
 
@@ -126,7 +127,7 @@
 
         Select Case Command.ToLower
             Case "show"
-                Await Me.ShowUsers(SubCommand1)
+                Await Me.UsersShow(SubCommand1)
             Case "information", "info"
                 Await Me.UserInformation(SubCommand1, SubCommand2)
             Case Else
@@ -137,8 +138,8 @@
 
     <Command(Description:="")>
     <ParameterDescription("Type", "")>
-    <CommandAlias("SU")>
-    Private Async Function ShowUsers(Optional ByVal Type As String = "All") As Task
+    <CommandAlias("US")>
+    Private Async Function UsersShow(Optional ByVal Type As String = "All") As Task
         If Not Client.IsLoggedIn Then
             Console.WriteLine("You should log in first.")
             Exit Function
@@ -288,7 +289,7 @@
                 Return Task.FromResult(Of Object)(Nothing)
             End If
 
-            Me.Help(CommandName)
+            Me.Help(CommandName, Description.Full)
         End If
 
         Return Task.FromResult(Of Object)(Nothing)
@@ -300,7 +301,7 @@
         OnlyParam
     End Enum
 
-    Private Sub Help(ByVal CommandName As String, Optional ByVal Mode As Description = Description.Full)
+    Private Sub Help(ByVal CommandName As String, ByVal Mode As Description)
         Dim Command = Commands.Item(CommandName)
 
         If Mode = Description.Full Or Mode = Description.OnlyUsage Then
