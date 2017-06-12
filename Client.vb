@@ -144,7 +144,7 @@
                 Await Me.UserInformation(SubCommand1, SubCommand2)
             Case Else
                 Console.WriteLine("Invalid parameters.")
-                Me.Help(Reflection.MethodInfo.GetCurrentMethod().Name, Description.OnlyParam)
+                Me.Help("Users", Description.OnlyParam)
         End Select
     End Function
 
@@ -178,7 +178,7 @@
                 ShowOtherUsers = True
             Case Else
                 Console.WriteLine("Invalid parameters.")
-                Me.Help(Reflection.MethodInfo.GetCurrentMethod().Name, Description.OnlyParam)
+                Me.Help("UsersShow", Description.OnlyParam)
                 Exit Function
         End Select
 
@@ -228,7 +228,7 @@
         End If
         If By Is Nothing OrElse Key Is Nothing Then
             Console.WriteLine("Invalid usage.")
-            Me.Help(Reflection.MethodInfo.GetCurrentMethod().Name, Description.OnlyUsage)
+            Me.Help("UserInformation", Description.OnlyUsage)
             Exit Function
         End If
 
@@ -256,7 +256,7 @@
                 End If
             Case Else
                 Console.WriteLine("Invalid parameters.")
-                Me.Help(Reflection.MethodInfo.GetCurrentMethod().Name, Description.OnlyParam)
+                Me.Help("UserInformation", Description.OnlyParam)
         End Select
 
         Dim PadLength = 24
