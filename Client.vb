@@ -16,7 +16,7 @@
 
             Dim CommandName As String = Nothing
             If Not Me.AliasesNames.TryGetValue(CommandString(0), CommandName) Then
-                Console.WriteLine("Command not found. Write ""Help"" to see commands list.")
+                Console.WriteLine("Command not found. Enter 'Help' to see the list of available commands.")
                 Console.WriteLine()
                 Continue Do
             End If
@@ -24,7 +24,7 @@
             Dim Command = Me.Commands.Item(CommandName)
 
             If CommandString.Length - 1 > Command.ParametersDescriptions.Count Then
-                Console.WriteLine("Invalid usage.")
+                Console.WriteLine("Number of parameters is more than expected.")
                 Me.Help(Command.Name, Description.OnlyUsage)
                 Console.WriteLine()
                 Continue Do
@@ -36,7 +36,7 @@
             Next
             For I = CommandString.Length - 1 To Command.ParametersDescriptions.Count - 1
                 If Not Command.ParametersDescriptions(I).IsOptional Then
-                    Console.WriteLine("Invalid usage.")
+                    Console.WriteLine("Number of parameters is less than expected.")
                     Me.Help(Command.Name, Description.OnlyUsage)
                     Console.WriteLine()
                     Continue Do
@@ -312,7 +312,7 @@
             Next
         Else
             If Not Me.AliasesNames.TryGetValue(CommandName, CommandName) Then
-                Console.WriteLine("Command not found. Write ""Help"" to see commands list.")
+                Console.WriteLine("Command not found. Enter 'Help' to see the list of available commands.")
 
                 Return Task.FromResult(Of Object)(Nothing)
             End If
