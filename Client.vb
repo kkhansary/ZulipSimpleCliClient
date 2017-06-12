@@ -139,6 +139,11 @@
 
         Select Case Command.ToLower
             Case "show"
+                If SubCommand2 IsNot Nothing Then
+                    Console.WriteLine("Invalid usage. Show has only one sub-command.")
+                    Exit Function
+                End If
+
                 Await Me.UsersShow(SubCommand1)
             Case "information", "info"
                 Await Me.UserInformation(SubCommand1, SubCommand2)
