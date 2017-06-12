@@ -197,22 +197,22 @@
         For I = 1 To Me.Client.Users.Value.Count
             Dim User = Me.Client.Users.Value.ItemAt(I - 1)
 
-            Dim PadLength = CInt(Math.Log10(Me.Client.Users.Value.Count)) + 1
+            Dim PadLength = CInt(Math.Floor(Math.Log10(Me.Client.Users.Value.Count) + 1))
             If User.IsBot Then
                 If Not ShowBots Then
                     Continue For
                 End If
-                Console.Write((CStr(I) & ".").PadLeft(PadLength) & "   Bot     ")
+                Console.Write((I.ToString() & ".").PadLeft(PadLength) & "   Bot     ")
             ElseIf User.IsAdmin Then
                 If Not ShowAdmins Then
                     Continue For
                 End If
-                Console.Write((CStr(I) & ".").PadLeft(PadLength) & "   Admin   ")
+                Console.Write((I.ToString() & ".").PadLeft(PadLength) & "   Admin   ")
             Else
                 If Not ShowOtherUsers Then
                     Continue For
                 End If
-                Console.Write((CStr(I) & ".").PadLeft(PadLength) & "   User    ")
+                Console.Write((I.ToString() & ".").PadLeft(PadLength) & "   User    ")
             End If
 
             Console.Write(User.FullName.PadRight(NamePadLength) & "   " & User.EmailAddress.PadRight(EmailPadLength))
@@ -253,7 +253,7 @@
 
         Select Case By.ToLower()
             Case "byindex", "index", "i"
-                Dim Index = CInt(Key)
+                Dim Index = Integer.Parse(Key)
                 If Index > Me.Client.Users.Value.Count Or Index < 1 Then
                     Console.WriteLine("User not found.")
                     Exit Function
