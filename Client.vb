@@ -127,7 +127,7 @@
     <ParameterDescription("SubCommand2", "")>
     <CommandAlias("U")>
     Private Async Function Users(Command As String, Optional SubCommand1 As String = Nothing, Optional SubCommand2 As String = Nothing) As Task
-        If Not Client.IsLoggedIn Then
+        If Client Is Nothing Then
             Console.WriteLine("You should log in first.")
             Exit Function
         End If
@@ -147,7 +147,7 @@
     <ParameterDescription("Type", "")>
     <CommandAlias("US")>
     Private Async Function UsersShow(Optional ByVal Type As String = "All") As Task
-        If Not Client.IsLoggedIn Then
+        If Client Is Nothing Then
             Console.WriteLine("You should log in first.")
             Exit Function
         End If
@@ -216,7 +216,7 @@
     <CommandAlias("UserInfo")>
     <CommandAlias("UI")>
     Private Async Function UserInformation(ByVal By As String, ByVal Key As String) As Task
-        If Not Client.IsLoggedIn Then
+        If Client Is Nothing Then
             Console.WriteLine("You should log in first.")
             Exit Function
         End If
