@@ -115,9 +115,10 @@
 
     <Command(Description:="")>
     <ParameterDescription("Command", "")>
-    <ParameterDescription("SubCommand", "")>
+    <ParameterDescription("SubCommand1", "")>
+    <ParameterDescription("SubCommand2", "")>
     <CommandAlias("U")>
-    Private Async Function Users(Command As String, Optional SubCommand1 As String = Nothing) As Task
+    Private Async Function Users(Command As String, Optional SubCommand1 As String = Nothing, Optional SubCommand2 As String = Nothing) As Task
         If Not Client.IsLoggedIn Then
             Console.WriteLine("You should log in first.")
             Exit Function
@@ -126,6 +127,8 @@
         Select Case Command.ToLower
             Case "show"
                 Await Me.ShowUsers(SubCommand1)
+            Case "information", "info"
+                Await Me.UserInformation(SubCommand1, SubCommand2)
             Case Else
                 Console.WriteLine("Invalid parameters.")
                 Me.Help(Reflection.MethodInfo.GetCurrentMethod().Name, Description.OnlyParam)
@@ -197,6 +200,75 @@
             End If
             Console.WriteLine()
         Next
+    End Function
+
+    <Command(Description:="")>
+    <ParameterDescription("By", "")>
+    <ParameterDescription("Key", "")>
+    <CommandAlias("UserInfo")>
+    <CommandAlias("UI")>
+    Private Async Function UserInformation(ByVal By As String, ByVal Key As String) As Task
+        If Not Client.IsLoggedIn Then
+            Console.WriteLine("You should log in first.")
+            Exit Function
+        End If
+        If By Is Nothing OrElse Key Is Nothing Then
+            Console.WriteLine("Invalid usage.")
+            Me.Help(Reflection.MethodInfo.GetCurrentMethod().Name, Description.OnlyUsage)
+            Exit Function
+        End If
+
+        Await Client.Users.RetrieveAsync
+
+        Dim User As Zulip.User
+
+        Select Case By.ToLower
+            Case "byindex", "index", "i"
+                Dim Index = CInt(Key)
+                If Index >= Client.Users.Value.Count Then
+                    Console.WriteLine("User not found.")
+                    Exit Function
+                End If
+                User = Client.Users.Value.ItemAt(Index)
+            Case "byemail", "email", "e"
+                If Not Client.Users.Value.TryGetValueByEmail(Key, User) Then
+                    Console.WriteLine("User not found.")
+                    Exit Function
+                End If
+            Case "byfullname", "byname", "fullname", "name", "n"
+                If Not Client.Users.Value.TryGetValueByFullName(Key, User) Then
+                    Console.WriteLine("User not found.")
+                    Exit Function
+                End If
+            Case Else
+                Console.WriteLine("Invalid parameters.")
+                Me.Help(Reflection.MethodInfo.GetCurrentMethod().Name, Description.OnlyParam)
+        End Select
+
+        Dim PadLength = 24
+        Console.WriteLine("Full Name:".PadRight(PadLength) & "   " & User.FullName)
+        If User.IsBot Then
+            Console.WriteLine("Bot Owner Email Address:".PadRight(PadLength) & "   " & User.BotOwnerEmailAddress)
+            Console.Write("Type:".PadRight(PadLength) & "   Bot     ")
+        Else
+            Console.WriteLine("Email Address:".PadRight(PadLength) & "   " & User.EmailAddress)
+            If User.IsAdmin Then
+                Console.Write("Type:".PadRight(PadLength) & "   Admin   ")
+            Else
+                Console.Write("Type:".PadRight(PadLength) & "   User    ")
+            End If
+        End If
+
+        If User.IsActive Then
+            Console.Write("Active     ")
+        Else
+            Console.Write("Inactive   ")
+        End If
+        If User.IsFrozen Then
+            Console.Write("Frozen")
+        End If
+        Console.WriteLine()
+        Console.WriteLine("Avatar Url".PadRight(PadLength) & "   " & User.AvatarUrl)
     End Function
 
     <Command(Description:="")>
