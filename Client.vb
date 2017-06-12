@@ -127,7 +127,8 @@
             Case "show"
                 Await Me.ShowUsers(SubCommand1)
             Case Else
-                Console.WriteLine("Command not found. Enter ""Help Users"" to see valid commands.")
+                Console.WriteLine("Command not found.")
+                Await Me.Help(Reflection.MethodInfo.GetCurrentMethod().Name)
         End Select
     End Function
 
@@ -160,7 +161,8 @@
                 ShowAdmins = True
                 ShowOtherUsers = True
             Case Else
-                Console.WriteLine("Type not found. Enter ""Help ShowUsers"" to see valid types.")
+                Console.WriteLine("Type not found.")
+                Await Me.Help(Reflection.MethodInfo.GetCurrentMethod().Name)
         End Select
 
         Await Client.Users.RetrieveAsync
