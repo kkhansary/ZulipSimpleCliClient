@@ -159,7 +159,7 @@
         Dim ShowAdmins = False
         Dim ShowOtherUsers = False
 
-        Select Case Type.ToLower
+        Select Case Type?.ToLower
             Case "all", Nothing
                 ShowBots = True
                 ShowAdmins = True
@@ -174,6 +174,7 @@
             Case Else
                 Console.WriteLine("Invalid parameters.")
                 Me.Help(Reflection.MethodInfo.GetCurrentMethod().Name, Description.OnlyParam)
+                Exit Function
         End Select
 
         Await Client.Users.RetrieveAsync
