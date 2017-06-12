@@ -176,9 +176,9 @@
                 ShowOtherUsers = True
             Case "bot"
                 ShowBots = True
-            Case "admin"
+            Case "admin", "admins"
                 ShowAdmins = True
-            Case "users"
+            Case "user", "users"
                 ShowAdmins = True
                 ShowOtherUsers = True
             Case Else
