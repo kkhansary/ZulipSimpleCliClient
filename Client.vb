@@ -135,10 +135,6 @@
     <ParameterDescription("Type", "")>
     <CommandAlias("SU")>
     Private Async Function ShowUsers(Optional ByVal Type As String = "All") As Task
-        If Type Is Nothing Then
-            Type = "All"
-        End If
-
         If Not Client.IsLoggedIn Then
             Console.WriteLine("You should log in first.")
             Exit Function
@@ -152,7 +148,7 @@
         Dim ShowOtherUsers = False
 
         Select Case Type.ToLower
-            Case "all"
+            Case "all", Nothing
                 ShowBots = True
                 ShowAdmins = True
                 ShowOtherUsers = True
