@@ -23,14 +23,21 @@
 
             Dim Command = Commands.Item(CommandName)
 
+            If CommandString.Length - 1 > Command.ParametersDescriptions.Count Then
+                Console.WriteLine("Invalid usage.")
+                Me.Help(Command.Name, Description.OnlyUsage)
+                Console.WriteLine()
+                Continue Do
+            End If
+
             Dim Args = New List(Of String)
             For I = 1 To CommandString.Length - 1
                 Args.Add(CommandString(I))
             Next
             For I = CommandString.Length - 1 To Command.ParametersDescriptions.Count - 1
                 If Not Command.ParametersDescriptions(I).IsOptional Then
-                    Console.WriteLine("Invalid parameters.")
-                    Await Me.Help(Command.Name)
+                    Console.WriteLine("Invalid usage.")
+                    Me.Help(Command.Name, Description.OnlyUsage)
                     Console.WriteLine()
                     Continue Do
                 End If
