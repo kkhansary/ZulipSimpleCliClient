@@ -189,22 +189,25 @@
 
         Await Client.Users.RetrieveAsync
 
-        For Each User In Client.Users.Value
+        For I = 1 To Client.Users.Value.Count
+            Dim User = Client.Users.Value.ItemAt(I - 1)
+
+            Dim PadLength = CInt(Math.Log10(Client.Users.Value.Count)) + 1
             If User.IsBot Then
                 If Not ShowBots Then
                     Continue For
                 End If
-                Console.Write("Bot     ")
+                Console.Write((CStr(I) & ".").PadLeft(PadLength) & "   Bot     ")
             ElseIf User.IsAdmin Then
                 If Not ShowAdmins Then
                     Continue For
                 End If
-                Console.Write("Admin   ")
+                Console.Write((CStr(I) & ".").PadLeft(PadLength) & "   Admin   ")
             Else
                 If Not ShowOtherUsers Then
                     Continue For
                 End If
-                Console.Write("User    ")
+                Console.Write((CStr(I) & ".").PadLeft(PadLength) & "   User    ")
             End If
 
             Console.Write(User.FullName.PadRight(NamePadLength) & "   " & User.EmailAddress.PadRight(EmailPadLength))
@@ -244,11 +247,11 @@
         Select Case By.ToLower
             Case "byindex", "index", "i"
                 Dim Index = CInt(Key)
-                If Index >= Client.Users.Value.Count Then
+                If Index > Client.Users.Value.Count OrElse Index < 1 Then
                     Console.WriteLine("User not found.")
                     Exit Function
                 End If
-                User = Client.Users.Value.ItemAt(Index)
+                User = Client.Users.Value.ItemAt(Index - 1)
             Case "byemail", "email", "e"
                 If Not Client.Users.Value.TryGetValueByEmail(Key, User) Then
                     Console.WriteLine("User not found.")
@@ -279,7 +282,7 @@
         End If
 
         If User.IsActive Then
-            Console.Write("Active     ")
+            Console.Write("Active   ")
         Else
             Console.Write("Inactive   ")
         End If
