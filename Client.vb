@@ -59,7 +59,7 @@
             If Method.IsStatic Then
                 Throw New InvalidOperationException("A method with a command attribute cannot be shared.")
             End If
-            If Method.ReturnType <> GetType(Task) Then
+            If Not GetType(Task).IsAssignableFrom(Method.ReturnType) Then
                 Throw New InvalidOperationException("A method with a command attribute must return a task.")
             End If
 
