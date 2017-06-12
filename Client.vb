@@ -136,6 +136,7 @@
             Console.WriteLine("You should log in first.")
             Exit Function
         End If
+        Debug.Assert(Me.Client.IsLoggedIn, "Client initializes but did not loged in.")
 
         Select Case Command.ToLower()
             Case "show"
@@ -164,6 +165,7 @@
             Console.WriteLine("You should log in first.")
             Exit Function
         End If
+        Debug.Assert(Me.Client.IsLoggedIn, "Client initializes but did not loged in.")
 
         Dim NamePadLength = 20
         Dim EmailPadLength = 30
@@ -237,6 +239,7 @@
             Console.WriteLine("You should log in first.")
             Exit Function
         End If
+        Debug.Assert(Me.Client.IsLoggedIn, "Client initializes but did not loged in.")
 
         If By Is Nothing Or Key Is Nothing Then
             Console.WriteLine("Invalid usage.")
