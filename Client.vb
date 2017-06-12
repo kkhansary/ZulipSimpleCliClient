@@ -246,7 +246,7 @@
 
         Await Me.Client.Users.RetrieveAsync()
 
-        Dim User As Zulip.User
+        Dim User As Zulip.User = Nothing
 
         Select Case By.ToLower()
             Case "byindex", "index", "i"
