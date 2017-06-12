@@ -28,16 +28,8 @@
             Next
             For I = CommandString.Length - 1 To Command.ParametersDescriptions.Count - 1
                 If Not Command.ParametersDescriptions(I).IsOptional Then
-                    Console.WriteLine("Invalid parameters. Usage:")
-                    Console.Write("   " & Command.Name)
-                    For Each PD In Command.ParametersDescriptions
-                        If PD.IsOptional Then
-                            Console.Write($" [<{PD.Name}>]")
-                        Else
-                            Console.Write($" <{PD.Name}>")
-                        End If
-                    Next
-                    Console.WriteLine()
+                    Console.WriteLine("Invalid parameters.")
+                    Await Me.Help(Command.Name)
                     Console.WriteLine()
                     Continue Do
                 End If
