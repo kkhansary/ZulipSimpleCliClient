@@ -127,8 +127,8 @@
             Case "show"
                 Await Me.ShowUsers(SubCommand1)
             Case Else
-                Console.WriteLine("Command not found.")
-                Await Me.Help(Reflection.MethodInfo.GetCurrentMethod().Name)
+                Console.WriteLine("Invalid parameters.")
+                Me.Help(Reflection.MethodInfo.GetCurrentMethod().Name, Description.OnlyParam)
         End Select
     End Function
 
@@ -161,8 +161,8 @@
                 ShowAdmins = True
                 ShowOtherUsers = True
             Case Else
-                Console.WriteLine("Type not found.")
-                Await Me.Help(Reflection.MethodInfo.GetCurrentMethod().Name)
+                Console.WriteLine("Invalid parameters.")
+                Me.Help(Reflection.MethodInfo.GetCurrentMethod().Name, Description.OnlyParam)
         End Select
 
         Await Client.Users.RetrieveAsync
@@ -215,8 +215,23 @@
 
                 Return Task.FromResult(Of Object)(Nothing)
             End If
-            Dim Command = Commands.Item(CommandName)
 
+            Me.Help(CommandName)
+        End If
+
+        Return Task.FromResult(Of Object)(Nothing)
+    End Function
+
+    Enum Description
+        Full
+        OnlyUsage
+        OnlyParam
+    End Enum
+
+    Private Sub Help(ByVal CommandName As String, Optional ByVal Mode As Description = Description.Full)
+        Dim Command = Commands.Item(CommandName)
+
+        If Mode = Description.Full Or Mode = Description.OnlyUsage Then
             Console.WriteLine("Usage:")
             Console.Write("   " & Command.Name)
             For Each PD In Command.ParametersDescriptions
@@ -227,7 +242,9 @@
                 End If
             Next
             Console.WriteLine()
+        End If
 
+        If Mode = Description.Full Then
             Console.WriteLine("Aliases:")
             Console.Write("  ")
             For Each [Alias] In Command.Aliases
@@ -235,16 +252,16 @@
             Next
             Console.WriteLine()
             Console.WriteLine()
+        End If
 
+        If Mode = Description.Full Or Mode = Description.OnlyParam Then
             Console.WriteLine("Parameters:")
             Dim PadLength = Command.ParametersDescriptions.Max(Function(PD) PD.Description.Length)
             For Each PD In Command.ParametersDescriptions
                 Console.WriteLine("   " & PD.Name.PadRight(PadLength) & "   " & PD.Description)
             Next
         End If
-
-        Return Task.FromResult(Of Object)(Nothing)
-    End Function
+    End Sub
 
     Private ReadOnly AliasesNames As Dictionary(Of String, String) = New Dictionary(Of String, String)(StringComparer.InvariantCultureIgnoreCase)
     Private ReadOnly Commands As Dictionary(Of String, CommandAttribute) = New Dictionary(Of String, CommandAttribute)()
