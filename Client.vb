@@ -112,6 +112,11 @@
     <ParameterDescription("Password", "")>
     <CommandAlias("L")>
     Private Async Function LogIn(UserName As String, Password As String) As Task
+        If Address Is Nothing Then
+            Console.WriteLine("You should set server address first.")
+            Exit Function
+        End If
+
         Client = New Zulip.Client(Address)
         Try
             Await Client.LoginAsync(Zulip.LoginData.CreateByPassword(UserName, Password))
