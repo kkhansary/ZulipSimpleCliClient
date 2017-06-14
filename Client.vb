@@ -7,7 +7,7 @@
 
     Private Async Function RunInteractiveConsole() As Task
         Do
-            Console.Write(Client?.UserName & "> ")
+            Console.Write(Me.Client?.UserName & "> ")
             Dim CommandString = Console.ReadLine().Split({" "c}, StringSplitOptions.RemoveEmptyEntries)
 
             If CommandString.Length = 0 Then
@@ -15,13 +15,13 @@
             End If
 
             Dim CommandName As String = Nothing
-            If Not AliasesNames.TryGetValue(CommandString(0), CommandName) Then
+            If Not Me.AliasesNames.TryGetValue(CommandString(0), CommandName) Then
                 Console.WriteLine("Command not found. Write ""Help"" to see commands list.")
                 Console.WriteLine()
                 Continue Do
             End If
 
-            Dim Command = Commands.Item(CommandName)
+            Dim Command = Me.Commands.Item(CommandName)
 
             If CommandString.Length - 1 > Command.ParametersDescriptions.Count Then
                 Console.WriteLine("Invalid usage.")
@@ -30,7 +30,7 @@
                 Continue Do
             End If
 
-            Dim Args = New List(Of String)
+            Dim Args = New List(Of String)()
             For I = 1 To CommandString.Length - 1
                 Args.Add(CommandString(I))
             Next
@@ -83,15 +83,15 @@
             Command.SetParametersDescriptions(ParametersDescriptions)
 
             Attributes = Method.GetCustomAttributes(GetType(CommandAliasAttribute), False)
-            Dim Aliases = New List(Of String)
+            Dim Aliases = New List(Of String)()
             For Each [Alias] As CommandAliasAttribute In Attributes
-                AliasesNames.Add([Alias].Alias, Command.Name)
+                Me.AliasesNames.Add([Alias].Alias, Command.Name)
                 Aliases.Add([Alias].Alias)
             Next
-            AliasesNames.Add(Command.Name, Command.Name)
+            Me.AliasesNames.Add(Command.Name, Command.Name)
 
             Command.SetAliases(Aliases)
-            Commands.Add(Command.Name, Command)
+            Me.Commands.Add(Command.Name, Command)
         Next
     End Sub
 
@@ -102,7 +102,7 @@
     <CommandAlias("Addr")>
     <CommandAlias("A")>
     Private Function SetServerAddress(Address As String) As Task
-        Client = Nothing
+        Me.Client = Nothing
         Me.Address = Address
         Return Task.FromResult(Of Object)(Nothing)
     End Function
@@ -112,14 +112,14 @@
     <ParameterDescription("Password", "")>
     <CommandAlias("L")>
     Private Async Function LogIn(UserName As String, Password As String) As Task
-        If Address Is Nothing Then
+        If Me.Address Is Nothing Then
             Console.WriteLine("You should set server address first.")
             Exit Function
         End If
 
-        Client = New Zulip.Client(Address)
+        Me.Client = New Zulip.Client(Me.Address)
         Try
-            Await Client.LoginAsync(Zulip.LoginData.CreateByPassword(UserName, Password))
+            Await Me.Client.LoginAsync(Zulip.LoginData.CreateByPassword(UserName, Password))
             Console.WriteLine("Logged in.")
         Catch Ex As Exception
             Console.WriteLine(Ex.Message)
@@ -132,12 +132,12 @@
     <ParameterDescription("SubCommand2", "")>
     <CommandAlias("U")>
     Private Async Function Users(Command As String, Optional SubCommand1 As String = Nothing, Optional SubCommand2 As String = Nothing) As Task
-        If Client Is Nothing Then
+        If Me.Client Is Nothing Then
             Console.WriteLine("You should log in first.")
             Exit Function
         End If
 
-        Select Case Command.ToLower
+        Select Case Command.ToLower()
             Case "show"
                 If SubCommand2 IsNot Nothing Then
                     Console.WriteLine("Invalid usage. Show has only one sub-command.")
@@ -160,7 +160,7 @@
     <ParameterDescription("Type", "")>
     <CommandAlias("US")>
     Private Async Function UsersShow(Optional ByVal Type As String = "All") As Task
-        If Client Is Nothing Then
+        If Me.Client Is Nothing Then
             Console.WriteLine("You should log in first.")
             Exit Function
         End If
@@ -172,7 +172,7 @@
         Dim ShowAdmins = False
         Dim ShowOtherUsers = False
 
-        Select Case Type.ToLower
+        Select Case Type.ToLower()
             Case "all"
                 ShowBots = True
                 ShowAdmins = True
@@ -190,12 +190,12 @@
                 Exit Function
         End Select
 
-        Await Client.Users.RetrieveAsync
+        Await Me.Client.Users.RetrieveAsync()
 
-        For I = 1 To Client.Users.Value.Count
-            Dim User = Client.Users.Value.ItemAt(I - 1)
+        For I = 1 To Me.Client.Users.Value.Count
+            Dim User = Me.Client.Users.Value.ItemAt(I - 1)
 
-            Dim PadLength = CInt(Math.Log10(Client.Users.Value.Count)) + 1
+            Dim PadLength = CInt(Math.Log10(Me.Client.Users.Value.Count)) + 1
             If User.IsBot Then
                 If Not ShowBots Then
                     Continue For
@@ -233,35 +233,36 @@
     <CommandAlias("UserInfo")>
     <CommandAlias("UI")>
     Private Async Function UserInformation(ByVal By As String, ByVal Key As String) As Task
-        If Client Is Nothing Then
+        If Me.Client Is Nothing Then
             Console.WriteLine("You should log in first.")
             Exit Function
         End If
-        If By Is Nothing OrElse Key Is Nothing Then
+
+        If By Is Nothing Or Key Is Nothing Then
             Console.WriteLine("Invalid usage.")
             Me.Help("UserInformation", Description.OnlyUsage)
             Exit Function
         End If
 
-        Await Client.Users.RetrieveAsync
+        Await Me.Client.Users.RetrieveAsync()
 
         Dim User As Zulip.User
 
-        Select Case By.ToLower
+        Select Case By.ToLower()
             Case "byindex", "index", "i"
                 Dim Index = CInt(Key)
-                If Index > Client.Users.Value.Count OrElse Index < 1 Then
+                If Index > Me.Client.Users.Value.Count Or Index < 1 Then
                     Console.WriteLine("User not found.")
                     Exit Function
                 End If
-                User = Client.Users.Value.ItemAt(Index - 1)
+                User = Me.Client.Users.Value.ItemAt(Index - 1)
             Case "byemail", "email", "e"
-                If Not Client.Users.Value.TryGetValueByEmail(Key, User) Then
+                If Not Me.Client.Users.Value.TryGetValueByEmail(Key, User) Then
                     Console.WriteLine("User not found.")
                     Exit Function
                 End If
             Case "byfullname", "byname", "fullname", "name", "n"
-                If Not Client.Users.Value.TryGetValueByFullName(Key, User) Then
+                If Not Me.Client.Users.Value.TryGetValueByFullName(Key, User) Then
                     Console.WriteLine("User not found.")
                     Exit Function
                 End If
@@ -302,12 +303,12 @@
     Private Function Help(Optional ByVal CommandName As String = Nothing) As Task
         If CommandName Is Nothing Then
             Console.WriteLine("Commands:")
-            Dim PadLength = Commands.Max(Function(Cmd) Cmd.Key.Length)
-            For Each Cmd In Commands
+            Dim PadLength = Me.Commands.Max(Function(Cmd) Cmd.Key.Length)
+            For Each Cmd In Me.Commands
                 Console.WriteLine("   " & Cmd.Key.PadRight(PadLength) & "   " & Cmd.Value.Description)
             Next
         Else
-            If Not AliasesNames.TryGetValue(CommandName, CommandName) Then
+            If Not Me.AliasesNames.TryGetValue(CommandName, CommandName) Then
                 Console.WriteLine("Command not found. Write ""Help"" to see commands list.")
 
                 Return Task.FromResult(Of Object)(Nothing)
@@ -320,13 +321,15 @@
     End Function
 
     Enum Description
+
         Full
         OnlyUsage
         OnlyParam
+
     End Enum
 
     Private Sub Help(ByVal CommandName As String, ByVal Mode As Description)
-        Dim Command = Commands.Item(CommandName)
+        Dim Command = Me.Commands.Item(CommandName)
 
         If Mode = Description.Full Or Mode = Description.OnlyUsage Then
             Console.WriteLine("Usage:")

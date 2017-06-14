@@ -3,8 +3,8 @@ Public Class ParameterDescriptionAttribute
     Inherits Attribute
 
     Public Sub New(Name As String, Description As String)
-        _Name = Name
-        _Description = Description
+        Me._Name = Name
+        Me._Description = Description
     End Sub
 
 #Region "IsOptional Property"
