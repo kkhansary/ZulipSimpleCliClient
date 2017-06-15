@@ -272,6 +272,7 @@
             Case Else
                 Console.WriteLine("Invalid parameters.")
                 Me.Help(NameOf(Me.UserInformation), Description.OnlyParam)
+				Exit Function
         End Select
 
         Dim PadLength = 24
